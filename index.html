@@ -707,9 +707,46 @@
     background: var(--gold);
     transition: width 0.4s ease;
   }
+
+  .desktop-only-notice{
+    display: none;
+  }
+  @media (max-width: 1199px){
+    .stage{ display: none; }
+    .desktop-only-notice{
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 1rem;
+      min-height: 100vh;
+      padding: 2rem;
+      text-align: center;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: var(--font-display);
+    }
+    .desktop-only-notice h1{
+      font-family: var(--font-cover-title);
+      font-size: clamp(1.6rem, 6vw, 2.4rem);
+      font-weight: 400;
+      color: var(--cover-ink);
+    }
+    .desktop-only-notice p{
+      font-size: clamp(0.85rem, 3vw, 1rem);
+      color: var(--ink-dim);
+      max-width: 32ch;
+      line-height: 1.5;
+    }
+  }
 </style>
 </head>
 <body>
+
+<div class="desktop-only-notice">
+  <h1>Open on Desktop</h1>
+  <p>This case study isn't optimized for smaller screens yet. Please view it on a larger window (1200px or wider) for the full experience.</p>
+</div>
 
 <div class="stage">
   <div class="frame" id="frame">

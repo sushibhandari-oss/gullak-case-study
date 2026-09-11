@@ -1,0 +1,1077 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Designing for Scale at Gullak</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=IBM+Plex+Mono:wght@400;500&family=Marcellus&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --bg:        #f9f9f5;
+    --bg-raised: #f0efe9;
+    --ink:       #3d2f21;
+    --ink-dim:   #7c6a54;
+    --ink-faint: #ab9a80;
+    --gold:      #8a5a1f;
+    --gold-dim:  #b9863f;
+    --dash:      #ccb68e;
+    --tile-fill: rgba(138,90,31,0.07);
+    --line:      #e2d3b3;
+    --shadow-soft: 0 1px 2px rgba(61,47,33,0.10), 0 14px 26px -18px rgba(61,47,33,0.35);
+    --slide-pad-x: clamp(1.75rem, 4vw, 4rem);
+    --index-item-pad-y: clamp(0.9rem, 1.8vw, 1.4rem);
+
+    --font-display: 'Instrument Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    --font-mono: 'IBM Plex Mono', ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace;
+    --font-cover-title: 'Marcellus', 'Iowan Old Style', 'Times New Roman', serif;
+
+    --cover-bg:  var(--bg);
+    --cover-ink: #1a1a1a;
+    --cover-sub: #6b6b6b;
+  }
+
+  *{ box-sizing: border-box; }
+  html, body{
+    height: 100%;
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--font-display);
+    -webkit-font-smoothing: antialiased;
+  }
+  h1, h2, h3, p{ margin: 0; text-wrap: balance; }
+
+  ::selection{ background: var(--gold-dim); color: var(--ink); }
+
+  .stage{
+    position: fixed;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--bg);
+    overflow: hidden;
+  }
+
+  .frame{
+    position: relative;
+    width: min(100vw, 177.78vh);
+    height: min(100vh, 56.25vw);
+    background: var(--bg);
+    box-shadow: 0 0 0 1px var(--line);
+  }
+
+  .slide{
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    padding: clamp(1rem, 2.2vw, 2rem) var(--slide-pad-x) clamp(1.5rem, 3vw, 3rem);
+    opacity: 0;
+    transform: translateY(14px);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+    pointer-events: none;
+  }
+  .slide.active{
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    .slide{ transition: opacity 0.15s linear; transform: none; }
+  }
+
+  .eyebrow{
+    font-family: var(--font-mono);
+    font-size: clamp(0.68rem, 0.85vw, 0.82rem);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--gold);
+    display: flex;
+    align-items: center;
+    gap: 0.6em;
+  }
+  .eyebrow::before{
+    content: "";
+    width: 0.5em;
+    height: 0.5em;
+    border-radius: 50%;
+    background: var(--gold);
+    flex: none;
+  }
+
+  .oneliner{
+    font-size: clamp(1rem, 1.5vw, 1.35rem);
+    font-weight: 400;
+    color: var(--ink);
+    max-width: 62ch;
+    line-height: 1.5;
+  }
+
+  .takeaway{
+    font-family: var(--font-mono);
+    font-size: clamp(0.7rem, 0.85vw, 0.85rem);
+    color: var(--ink-dim);
+    letter-spacing: 0.01em;
+  }
+  .takeaway em{
+    font-style: normal;
+    color: var(--gold);
+  }
+
+  /* ---------- placeholder primitive ---------- */
+  .ph{
+    border: 1.5px dashed var(--dash);
+    border-radius: 10px;
+    background: var(--tile-fill);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: var(--ink-dim);
+    font-family: var(--font-mono);
+    font-size: clamp(0.62rem, 0.8vw, 0.78rem);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    line-height: 1.5;
+    padding: 1em;
+    position: relative;
+  }
+
+  /* ================= SLIDE 1 — COVER ================= */
+  .slide-cover{
+    background: var(--cover-bg);
+    align-items: flex-start;
+    justify-content: center;
+    text-align: left;
+    gap: clamp(1rem, 2vw, 1.5rem);
+  }
+  .cover-title{
+    font-family: var(--font-cover-title);
+    font-size: clamp(2.2rem, 5.2vw, 4.6rem);
+    font-weight: 400;
+    letter-spacing: 0;
+    line-height: 1.15;
+    color: var(--cover-ink);
+  }
+  .cover-subtitle{
+    font-size: clamp(0.9rem, 1.2vw, 1.15rem);
+    font-weight: 400;
+    color: var(--cover-sub);
+  }
+  /* ================= SLIDE 10 — THANK YOU (OUTRO) ================= */
+  .slide-outro{
+    background: var(--cover-bg);
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+  }
+
+  .cover-mark{
+    margin-top: clamp(2rem, 5vw, 4rem);
+    font-family: var(--font-mono);
+    font-size: clamp(0.62rem, 0.78vw, 0.75rem);
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+  }
+  .hint{
+    position: absolute;
+    bottom: clamp(3.25rem, 5.5vw, 4.5rem);
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    transition: opacity 0.6s ease;
+  }
+  .hint.hidden{ opacity: 0; }
+
+  /* ================= SLIDE 2 — INDEX ================= */
+  .slide-index{
+    justify-content: center;
+  }
+  .index-grid{
+    display: grid;
+    grid-template-columns: minmax(0, 2.3fr) minmax(0, 1fr);
+    column-gap: clamp(2.5rem, 5vw, 4rem);
+    align-items: start;
+  }
+  .index-body{
+    grid-column: 1;
+    display: flex;
+    flex-direction: column;
+    gap: clamp(2rem, 4vw, 3rem);
+  }
+  .index-body > .oneliner{
+    max-width: 62ch;
+  }
+  .index-list{
+    max-width: 62ch;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+  }
+  .index-list li{
+    display: flex;
+    align-items: baseline;
+    gap: clamp(1rem, 2vw, 1.75rem);
+    padding: var(--index-item-pad-y) 0;
+    border-bottom: 1px dashed var(--line);
+  }
+  .index-list li:first-child{ border-top: 1px dashed var(--line); }
+  .index-num{
+    font-family: var(--font-mono);
+    font-size: clamp(0.75rem, 1vw, 0.9rem);
+    color: var(--gold-dim);
+  }
+  .index-label{
+    font-size: clamp(1.1rem, 1.8vw, 1.6rem);
+    font-weight: 500;
+    letter-spacing: -0.005em;
+  }
+
+  /* ---- Depth panel (right column) ---- */
+  .depth-panel{
+    grid-column: 2;
+    display: flex;
+    flex-direction: column;
+    gap: clamp(0.6rem, 1.2vw, 0.9rem);
+    background: var(--bg-raised);
+    border-radius: 16px;
+    padding: clamp(1.1rem, 2.2vw, 1.6rem);
+  }
+  .depth-label{
+    font-family: var(--font-mono);
+    font-size: clamp(0.66rem, 0.8vw, 0.78rem);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--gold-dim);
+  }
+  .depth-panel .oneliner{
+    font-size: clamp(0.85rem, 1.15vw, 1rem);
+    color: var(--ink-dim);
+    margin-bottom: clamp(0.4rem, 0.8vw, 0.6rem);
+  }
+  .case-card{
+    display: block;
+    border-radius: 12px;
+    border: 1px solid var(--line);
+    background: transparent;
+    overflow: hidden;
+    text-decoration: none;
+    color: inherit;
+    transition: background 0.2s ease, box-shadow 0.2s ease;
+  }
+  .case-card:hover{
+    background: var(--bg-raised);
+    box-shadow: var(--shadow-soft);
+  }
+  .case-card-media{
+    padding: clamp(0.6rem, 1.2vw, 0.85rem) clamp(0.6rem, 1.2vw, 0.85rem) 0;
+  }
+  .case-card-image{
+    display: block;
+    aspect-ratio: 16 / 9;
+    width: 100%;
+    border-radius: 8px;
+    object-fit: cover;
+    object-position: center 30%;
+  }
+  .case-card-body{
+    padding: clamp(0.75rem, 1.5vw, 1.1rem);
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+  .case-card-title{
+    font-size: clamp(0.88rem, 1.15vw, 1.02rem);
+    font-weight: 500;
+    letter-spacing: -0.005em;
+    line-height: 1.3;
+    color: var(--ink);
+    margin: 0;
+  }
+  .case-card-sub{
+    font-size: clamp(0.72rem, 0.88vw, 0.82rem);
+    color: var(--ink-dim);
+    line-height: 1.45;
+  }
+  .case-card-cta{
+    font-family: var(--font-mono);
+    font-size: clamp(0.62rem, 0.78vw, 0.72rem);
+    letter-spacing: 0.04em;
+    color: var(--gold-dim);
+    margin-top: 0.2rem;
+  }
+
+  /* ================= SHARED: CTA LINK ================= */
+  .cta-link{
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0.45em;
+    align-self: flex-start;
+    font-family: var(--font-mono);
+    font-size: clamp(0.72rem, 0.88vw, 0.85rem);
+    letter-spacing: 0.03em;
+    color: var(--gold);
+    text-decoration: none;
+    border-bottom: 1px solid var(--gold-dim);
+    padding-bottom: 0.15em;
+    transition: color 0.2s ease, border-color 0.2s ease, gap 0.2s ease;
+  }
+  .cta-link:hover{
+    color: var(--ink);
+    border-color: var(--ink);
+    gap: 0.7em;
+  }
+
+  /* ================= SHARED: REAL SCREENSHOT TILE ================= */
+  .shot{
+    display: block;
+    border-radius: 12px;
+    border: 1px solid var(--line);
+    background: var(--bg-raised);
+    object-fit: cover;
+    box-shadow: var(--shadow-soft);
+  }
+
+  /* ================= SLIDE 4 — LOGO EXPLORATIONS: FULL SET ================= */
+  .slide-explore-full{
+    gap: clamp(0.9rem, 1.8vw, 1.4rem);
+  }
+  .explore-full{
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: clamp(1rem, 2vw, 1.6rem);
+    min-height: 0;
+  }
+  .explore-row-block{
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.55rem;
+    min-height: 0;
+  }
+  .row-label{
+    font-family: var(--font-mono);
+    font-size: clamp(0.58rem, 0.68vw, 0.66rem);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+  }
+  .explore-row{
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: clamp(0.9rem, 1.8vw, 1.6rem);
+    min-height: 0;
+  }
+  .explore-row .shot{
+    height: 100%;
+    width: auto;
+    aspect-ratio: 375 / 640;
+  }
+
+  /* ================= SLIDE 5 — APP ICONS ================= */
+  .slide-icons{
+    justify-content: center;
+    gap: clamp(1.5rem, 3vw, 2.5rem);
+  }
+  .icon-row{
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: clamp(1.75rem, 3.5vw, 3.25rem);
+  }
+  .icon-cell{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.9rem;
+  }
+  .icon-tile{
+    width: min(15vw, 190px);
+    aspect-ratio: 1 / 1;
+    border-radius: 22%;
+  }
+  img.icon-tile{
+    border: 1px solid var(--line);
+    background: var(--bg-raised);
+    object-fit: cover;
+    box-shadow: var(--shadow-soft);
+  }
+  .icon-cell span{
+    font-family: var(--font-mono);
+    font-size: clamp(0.6rem, 0.72vw, 0.7rem);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+  }
+
+  /* ================= SLIDE 3 — FESTIVE FINAL ================= */
+  .slide-final{
+    justify-content: center;
+    gap: clamp(1.25rem, 2.5vw, 2rem);
+  }
+  .final-row{
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: clamp(1.5rem, 3vw, 2.5rem);
+    min-height: 0;
+  }
+  .final-item{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+    height: 100%;
+    min-height: 0;
+  }
+  .shot-frame-wrap{
+    position: relative;
+    height: calc(100% - 2rem);
+    aspect-ratio: 375 / 812;
+    border-radius: 14px;
+    overflow: hidden;
+    border: 1px solid var(--line);
+    background: var(--bg-raised);
+    box-shadow: var(--shadow-soft);
+  }
+  .shot-frame{
+    position: absolute;
+    inset: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  .shot-frame img{
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+  .shot-frame::-webkit-scrollbar{ display: none; width: 0; height: 0; }
+  .scroll-indicator{
+    position: absolute;
+    top: 0;
+    right: 6px;
+    width: 4px;
+    border-radius: 2px;
+    background: #ffffff;
+    mix-blend-mode: difference;
+    pointer-events: none;
+    opacity: 0.65;
+    transition: opacity 0.25s ease;
+    z-index: 2;
+  }
+  .screen-row .scroll-indicator{
+    background: #bdbdbd;
+    mix-blend-mode: normal;
+  }
+  .shot-frame-wrap:hover .scroll-indicator,
+  .scroll-indicator.is-scrolling{
+    opacity: 0.95;
+  }
+  .final-item span{
+    font-family: var(--font-mono);
+    font-size: clamp(0.6rem, 0.72vw, 0.7rem);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+  }
+
+  /* ================= SLIDE 6 — GOAL-BASED SAVINGS ================= */
+  .goals-body{
+    flex: 1;
+    display: grid;
+    grid-template-columns: 42fr 58fr;
+    gap: clamp(2rem, 4vw, 3.5rem);
+    min-height: 0;
+  }
+  .goals-left{
+    display: flex;
+    flex-direction: column;
+    gap: clamp(1rem, 2vw, 1.5rem);
+    min-height: 0;
+  }
+  .steps-list{
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: clamp(1.25rem, 2.5vw, 2rem);
+    min-height: 0;
+  }
+  .step{
+    display: flex;
+    align-items: baseline;
+    gap: clamp(0.75rem, 1.5vw, 1.1rem);
+  }
+  .step-num{
+    font-family: var(--font-mono);
+    font-size: clamp(0.8rem, 1vw, 0.95rem);
+    color: var(--gold-dim);
+    flex: none;
+  }
+  .step-text{
+    font-size: clamp(0.95rem, 1.3vw, 1.2rem);
+    color: var(--ink);
+    line-height: 1.4;
+  }
+  .learning{
+    flex: none;
+    background: var(--bg-raised);
+    border-left: 3px solid var(--gold);
+    border-radius: 0 10px 10px 0;
+    padding: clamp(0.9rem, 1.8vw, 1.25rem) clamp(1.1rem, 2.2vw, 1.5rem);
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+  }
+  .learning-label{
+    font-family: var(--font-mono);
+    font-size: clamp(0.68rem, 0.85vw, 0.78rem);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--gold);
+    font-weight: 600;
+  }
+  .learning-text{
+    font-size: clamp(0.92rem, 1.2vw, 1.08rem);
+    color: var(--ink);
+    line-height: 1.55;
+  }
+  .goals-right{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 0;
+  }
+  .video-panel{
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--bg-raised);
+    border: 1px solid var(--line);
+    border-radius: 20px;
+    box-shadow: var(--shadow-soft);
+    padding: clamp(1.5rem, 3vw, 2.25rem);
+    box-sizing: border-box;
+  }
+  .proto-video-frame{
+    height: 100%;
+    width: auto;
+    max-width: 100%;
+    aspect-ratio: 748 / 1616;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: var(--shadow-soft);
+  }
+  .proto-video{
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  /* ================= SLIDE 7 & 8 — LARGE SINGLE ZONE ================= */
+  .slide-single{
+    gap: clamp(1.25rem, 2.5vw, 2rem);
+  }
+  .slide-single .oneliner + .cta-link{
+    margin-top: calc(-1 * clamp(1.25rem, 2.5vw, 2rem) + 0.5rem);
+  }
+  .single-zone{
+    flex: 1;
+    min-height: 0;
+  }
+  .single-zone .ph{ width: 100%; height: 100%; }
+
+  /* ================= SLIDE 8 — DASHBOARD CAROUSEL ================= */
+  .dashboard-carousel{
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: clamp(1rem, 2vw, 1.5rem);
+    overflow-x: auto;
+    overflow-y: hidden;
+    min-height: 0;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    width: calc(100% + 2 * var(--slide-pad-x));
+    margin-left: calc(-1 * var(--slide-pad-x));
+    margin-right: calc(-1 * var(--slide-pad-x));
+    padding-left: var(--slide-pad-x);
+    padding-right: var(--slide-pad-x);
+    box-sizing: border-box;
+  }
+  .dashboard-carousel::-webkit-scrollbar{ display: none; width: 0; height: 0; }
+  .dashboard-carousel img{
+    flex: none;
+    height: 100%;
+    width: auto;
+    aspect-ratio: 1512 / 982;
+    border-radius: 10px;
+    border: 1px solid var(--line);
+    background: var(--bg-raised);
+    box-shadow: var(--shadow-soft);
+    object-fit: cover;
+  }
+
+  /* ================= SLIDE 7 — JEWELLERY AGGREGATOR: SCREEN ROW ================= */
+  .screen-row{
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: clamp(0.9rem, 1.8vw, 1.4rem);
+    min-height: 0;
+  }
+  .screen-row .shot-frame-wrap{
+    flex: 1 1 0;
+    width: auto;
+    height: auto;
+    max-height: 100%;
+  }
+
+  /* ================= SLIDE 9 — JEWELLERY SCHEMES: TICKER ================= */
+  .screen-row-cover .shot-frame img{
+    height: 100%;
+    object-fit: cover;
+  }
+  .ticker-row{
+    flex: 1;
+    min-height: 0;
+    position: relative;
+    overflow: hidden;
+    width: calc(100% + 2 * var(--slide-pad-x));
+    margin-left: calc(-1 * var(--slide-pad-x));
+    margin-right: calc(-1 * var(--slide-pad-x));
+    -webkit-mask-image: linear-gradient(to right, transparent, black clamp(1.5rem, 4vw, 4rem), black calc(100% - clamp(1.5rem, 4vw, 4rem)), transparent);
+    mask-image: linear-gradient(to right, transparent, black clamp(1.5rem, 4vw, 4rem), black calc(100% - clamp(1.5rem, 4vw, 4rem)), transparent);
+  }
+  .ticker-track{
+    display: flex;
+    align-items: center;
+    height: 100%;
+    width: max-content;
+    gap: clamp(1.25rem, 2.2vw, 2rem);
+    padding: 0 var(--slide-pad-x);
+    animation: ticker-scroll 34s linear infinite;
+  }
+  .ticker-row:hover .ticker-track{
+    animation-play-state: paused;
+  }
+  @keyframes ticker-scroll{
+    from{ transform: translateX(0); }
+    to{ transform: translateX(-50%); }
+  }
+  .ticker-track .shot-frame-wrap{
+    flex: none;
+    width: auto;
+    height: 100%;
+  }
+  @media (prefers-reduced-motion: reduce){
+    .ticker-track{ animation: none; }
+  }
+
+  /* ================= NAV / CHROME ================= */
+  .progress-track{
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: var(--line);
+    z-index: 5;
+  }
+  .progress-fill{
+    height: 100%;
+    width: 0%;
+    background: var(--gold);
+    transition: width 0.4s ease;
+  }
+</style>
+</head>
+<body>
+
+<div class="stage">
+  <div class="frame" id="frame">
+
+    <!-- SLIDE 1 — COVER -->
+    <section class="slide slide-cover active" data-slide="1">
+      <h1 class="cover-title">Designing Across Surfaces at Gullak: Consumer App, Internal Tools, and Campaigns</h1>
+      <p class="cover-subtitle">A mini case study on the different types of work I did on Gullak. Strategised and designed 10+ features end to end. Not all of them succeeded, but each one helped shape the direction of the product.</p>
+      <p class="hint" id="hint">Use ← → to navigate</p>
+    </section>
+
+    <!-- SLIDE 2 — INTRO / INDEX -->
+    <section class="slide slide-index" data-slide="2">
+      <div class="index-grid">
+        <div class="index-body">
+          <p class="oneliner">At Gullak, I owned features end to end — from strategy through execution, including visual and motion design, not just product design. Across a two-person team, I worked on 10+ features spanning the consumer-facing app, B2B internal tools, and marketing and collaboration material.</p>
+          <ul class="index-list">
+            <li><span class="index-num">01</span><span class="index-label">Festive Campaigns</span></li>
+            <li><span class="index-num">02</span><span class="index-label">Goal-Based Savings</span></li>
+            <li><span class="index-num">03</span><span class="index-label">Jewellery Aggregator</span></li>
+            <li><span class="index-num">04</span><span class="index-label">Gold Leasing Dashboard (B2B)</span></li>
+          </ul>
+        </div>
+        <div class="depth-panel">
+          <p class="depth-label">Looking for depth instead of breadth?</p>
+          <p class="oneliner">This is a mini case study covering the different types of work I've done on Gullak, in brief. If you're looking for a deep dive, check out this case study instead.</p>
+          <a class="case-card" href="https://www.figma.com/proto/3kz64Pb7xG3gCdy4em0ZJb/Case-Studies?page-id=274%3A13916&node-id=732-18750&viewport=718%2C406%2C0.02&t=5lg9QsYfQ6wH7nF5-1&scaling=scale-down&content-scaling=fixed&hide-ui=1" target="_blank" rel="noopener">
+            <div class="case-card-media">
+              <img class="case-card-image" src="assets/02-index-case-study-card/jewellery-schemes-hero.png" alt="" />
+            </div>
+            <div class="case-card-body">
+              <h3 class="case-card-title">Launching Jewellery Schemes on Gullak: 0→1, Scaling to 10+ Schemes</h3>
+              <p class="case-card-sub">From a single jeweller partnership to a white-labelled system used by 10+ jewellers.</p>
+              <span class="case-card-cta">Read the full case study →</span>
+            </div>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 3 — FESTIVE CAMPAIGNS: FINAL -->
+    <section class="slide slide-final" data-slide="3">
+      <div class="eyebrow">Festive Campaigns</div>
+      <p class="oneliner">Drove ~3x GTV uplift on Gullak during Akshaya Tritiya and Diwali through conversion-focused festive journeys and seasonal offer discovery.</p>
+      <div class="final-row">
+        <div class="final-item">
+          <div class="shot-frame-wrap">
+            <div class="shot-frame">
+              <img src="assets/04-festive-final/Gullak%20Case%20Study/akshaya-tritiya.png" alt="" />
+            </div>
+          </div>
+          <span>Akshaya Tritiya</span>
+        </div>
+        <div class="final-item">
+          <div class="shot-frame-wrap">
+            <div class="shot-frame">
+              <img src="assets/04-festive-final/Gullak%20Case%20Study/navratri.jpg" alt="" />
+            </div>
+          </div>
+          <span>Navaratri</span>
+        </div>
+        <div class="final-item">
+          <div class="shot-frame-wrap">
+            <div class="shot-frame">
+              <img src="assets/04-festive-final/Gullak%20Case%20Study/Dusshera.jpg" alt="" />
+            </div>
+          </div>
+          <span>Dussehra</span>
+        </div>
+        <div class="final-item">
+          <div class="shot-frame-wrap">
+            <div class="shot-frame">
+              <img src="assets/04-festive-final/Gullak%20Case%20Study/Diwali.jpg" alt="" />
+            </div>
+          </div>
+          <span>Diwali</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 4 — LOGO EXPLORATIONS: FULL SET -->
+    <section class="slide slide-explore-full" data-slide="4">
+      <div class="eyebrow">Logo Explorations</div>
+      <div class="explore-full">
+        <div class="explore-row-block">
+          <span class="row-label">Akshaya Tritiya — Gullak Golden Tritiya</span>
+          <div class="explore-row">
+            <img class="shot" src="assets/03-festive-explorations/logo-explorations/Gullak%20Case%20Study/Frame%201597884327.png" alt="" />
+            <img class="shot" src="assets/03-festive-explorations/logo-explorations/Gullak%20Case%20Study/Frame%201597884328.png" alt="" />
+            <img class="shot" src="assets/03-festive-explorations/logo-explorations/Gullak%20Case%20Study/Frame%201597884314.png" alt="" />
+            <img class="shot" src="assets/03-festive-explorations/logo-explorations/Gullak%20Case%20Study/Frame%201597884372.png" alt="" />
+            <img class="shot" src="assets/03-festive-explorations/logo-explorations/Gullak%20Case%20Study/Frame%201597884369.png" alt="" />
+          </div>
+        </div>
+        <div class="explore-row-block">
+          <span class="row-label">Diwali — Great Gold Festival</span>
+          <div class="explore-row">
+            <img class="shot" src="assets/03-festive-explorations/logo-explorations/Gullak%20Case%20Study/Frame%201597884300.png" alt="" />
+            <img class="shot" src="assets/03-festive-explorations/logo-explorations/Gullak%20Case%20Study/Home_MS%20+%20reward.png" alt="" />
+            <img class="shot" src="assets/03-festive-explorations/logo-explorations/Gullak%20Case%20Study/Frame%201597884506.png" alt="" />
+            <img class="shot" src="assets/03-festive-explorations/logo-explorations/Gullak%20Case%20Study/Frame%202147224300.png" alt="" />
+            <img class="shot" src="assets/03-festive-explorations/logo-explorations/Gullak%20Case%20Study/Frame%201597884291.png" alt="" />
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 5 — APP ICONS -->
+    <section class="slide slide-icons" data-slide="5">
+      <div class="eyebrow">App Icons Across Festivals</div>
+      <div class="icon-row">
+        <div class="icon-cell">
+          <img class="icon-tile" src="assets/03-festive-explorations/app-icons/Gullak%20Case%20Study/Akshay%20tritiya.png" alt="" />
+          <span>Akshaya Tritiya</span>
+        </div>
+        <div class="icon-cell">
+          <img class="icon-tile" src="assets/03-festive-explorations/app-icons/Gullak%20Case%20Study/dasara.png" alt="" />
+          <span>Dussehra</span>
+        </div>
+        <div class="icon-cell">
+          <img class="icon-tile" src="assets/03-festive-explorations/app-icons/Gullak%20Case%20Study/diwali.png" alt="" />
+          <span>Diwali</span>
+        </div>
+        <div class="icon-cell">
+          <img class="icon-tile" src="assets/03-festive-explorations/app-icons/Gullak%20Case%20Study/christmas.png" alt="" />
+          <span>Christmas</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 6 — GOAL-BASED SAVINGS -->
+    <section class="slide slide-goals" data-slide="6">
+      <div class="goals-body">
+        <div class="goals-left">
+          <div class="eyebrow">Goal-Based Savings</div>
+          <p class="oneliner">Designed a goal-based savings flow for users with long-term gold accumulation goals — helping them work systematically towards a target amount.</p>
+          <div class="steps-list">
+            <div class="step"><span class="step-num">01</span><span class="step-text">Select your gold quantity</span></div>
+            <div class="step"><span class="step-num">02</span><span class="step-text">Select your timeline</span></div>
+            <div class="step"><span class="step-num">03</span><span class="step-text">Set up a SIP to hit the goal</span></div>
+          </div>
+          <div class="learning">
+            <div class="learning-label">The Learning</div>
+            <p class="learning-text">Most users didn't work backwards from a goal. They saved as much as they could each month instead. That insight shaped the direction toward jewellery schemes, built around how people actually save.</p>
+          </div>
+        </div>
+        <div class="goals-right">
+          <div class="video-panel">
+            <div class="proto-video-frame">
+              <video class="proto-video" src="assets/05-goal-based-savings/prototype-video/goal-based-savings-prototype-v2.mp4" controls playsinline preload="metadata"></video>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 7 — JEWELLERY SCHEMES -->
+    <section class="slide slide-single" data-slide="7">
+      <div class="eyebrow">Jewellery Schemes</div>
+      <p class="oneliner">The failure of goal-based savings led to jewellery schemes on Gullak. I owned design of the pioneer scheme with CaratLane as proof of concept, which helped scale to 10+ schemes.</p>
+      <a class="cta-link" href="https://www.figma.com/proto/3kz64Pb7xG3gCdy4em0ZJb/Case-Studies?page-id=274%3A13916&node-id=732-18750&viewport=718%2C406%2C0.02&t=5lg9QsYfQ6wH7nF5-1&scaling=scale-down&content-scaling=fixed&hide-ui=1" target="_blank" rel="noopener">View Detailed Case Study →</a>
+      <div class="ticker-row screen-row-cover">
+        <div class="ticker-track">
+          <div class="shot-frame-wrap">
+            <div class="shot-frame">
+              <img src="assets/08-jewellery-schemes/Gullak%20Case%20Study/treasure-chest-edge.png" alt="" />
+            </div>
+          </div>
+          <div class="shot-frame-wrap">
+            <div class="shot-frame">
+              <img src="assets/08-jewellery-schemes/Gullak%20Case%20Study/bluestone-grp.png" alt="" />
+            </div>
+          </div>
+          <div class="shot-frame-wrap">
+            <div class="shot-frame">
+              <img src="assets/08-jewellery-schemes/Gullak%20Case%20Study/swarna-sakthi.png" alt="" />
+            </div>
+          </div>
+          <div class="shot-frame-wrap">
+            <div class="shot-frame">
+              <img src="assets/08-jewellery-schemes/Gullak%20Case%20Study/palmonas-pop.png" alt="" />
+            </div>
+          </div>
+          <div class="shot-frame-wrap">
+            <div class="shot-frame">
+              <img src="assets/08-jewellery-schemes/Gullak%20Case%20Study/bluestone-gold-mine.png" alt="" />
+            </div>
+          </div>
+          <div class="shot-frame-wrap">
+            <div class="shot-frame">
+              <img src="assets/08-jewellery-schemes/Gullak%20Case%20Study/grt-jewellers.png" alt="" />
+            </div>
+          </div>
+          <div class="shot-frame-wrap" aria-hidden="true">
+            <div class="shot-frame">
+              <img src="assets/08-jewellery-schemes/Gullak%20Case%20Study/treasure-chest-edge.png" alt="" />
+            </div>
+          </div>
+          <div class="shot-frame-wrap" aria-hidden="true">
+            <div class="shot-frame">
+              <img src="assets/08-jewellery-schemes/Gullak%20Case%20Study/bluestone-grp.png" alt="" />
+            </div>
+          </div>
+          <div class="shot-frame-wrap" aria-hidden="true">
+            <div class="shot-frame">
+              <img src="assets/08-jewellery-schemes/Gullak%20Case%20Study/swarna-sakthi.png" alt="" />
+            </div>
+          </div>
+          <div class="shot-frame-wrap" aria-hidden="true">
+            <div class="shot-frame">
+              <img src="assets/08-jewellery-schemes/Gullak%20Case%20Study/palmonas-pop.png" alt="" />
+            </div>
+          </div>
+          <div class="shot-frame-wrap" aria-hidden="true">
+            <div class="shot-frame">
+              <img src="assets/08-jewellery-schemes/Gullak%20Case%20Study/bluestone-gold-mine.png" alt="" />
+            </div>
+          </div>
+          <div class="shot-frame-wrap" aria-hidden="true">
+            <div class="shot-frame">
+              <img src="assets/08-jewellery-schemes/Gullak%20Case%20Study/grt-jewellers.png" alt="" />
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 8 — JEWELLERY AGGREGATOR -->
+    <section class="slide slide-single" data-slide="8">
+      <div class="eyebrow">Jewellery Aggregator</div>
+      <p class="oneliner">Designed a comparison tool letting users evaluate jewellery across multiple renowned jewellers in one place — addressing a market where comparing pieces meant visiting each jeweller's site individually.</p>
+      <div class="screen-row">
+        <div class="shot-frame-wrap">
+          <div class="shot-frame">
+            <img src="assets/06-jewellery-aggregator/Gullak%20Case%20Study/Homepage%20-%20Rings%20only.png" alt="" />
+          </div>
+        </div>
+        <div class="shot-frame-wrap">
+          <div class="shot-frame">
+            <img src="assets/06-jewellery-aggregator/Gullak%20Case%20Study/Subcategory%20Page.png" alt="" />
+          </div>
+        </div>
+        <div class="shot-frame-wrap">
+          <div class="shot-frame">
+            <img src="assets/06-jewellery-aggregator/Gullak%20Case%20Study/Subcategory%20Page-1.png" alt="" />
+          </div>
+        </div>
+        <div class="shot-frame-wrap">
+          <div class="shot-frame">
+            <img src="assets/06-jewellery-aggregator/Gullak%20Case%20Study/Product%20Details%20Collapsed.png" alt="" />
+          </div>
+        </div>
+        <div class="shot-frame-wrap">
+          <div class="shot-frame">
+            <img src="assets/06-jewellery-aggregator/Gullak%20Case%20Study/Wishlist.png" alt="" />
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 9 — GOLD LEASING DASHBOARD -->
+    <section class="slide slide-single" data-slide="9">
+      <div class="eyebrow">Gold Leasing Dashboard (B2B)</div>
+      <p class="oneliner">Designed a B2B dashboard for Gullak's jeweller partners to track gold leasing, including disbursement, interest payouts, and lease applications. This helped onboard 3 more jeweller partners.</p>
+      <div class="dashboard-carousel">
+        <img src="assets/07-gold-leasing-dashboard/Gullak%20Case%20Study/Lease%20Config-4.png" alt="" />
+        <img src="assets/07-gold-leasing-dashboard/Gullak%20Case%20Study/Adding%20Buffer%2029.png" alt="" />
+        <img src="assets/07-gold-leasing-dashboard/Gullak%20Case%20Study/dashboard-overview.png" alt="" />
+        <img src="assets/07-gold-leasing-dashboard/Gullak%20Case%20Study/disbursement-tracking.png" alt="" />
+        <img src="assets/07-gold-leasing-dashboard/Gullak%20Case%20Study/Repayment%20Page.png" alt="" />
+        <img src="assets/07-gold-leasing-dashboard/Gullak%20Case%20Study/profile.png" alt="" />
+      </div>
+    </section>
+
+    <!-- SLIDE 10 — THANK YOU -->
+    <section class="slide slide-outro" data-slide="10">
+      <h1 class="cover-title">Thank You :)</h1>
+    </section>
+
+    <div class="progress-track">
+      <div class="progress-fill" id="progressFill"></div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  const slides = Array.from(document.querySelectorAll('.slide'));
+  const total = slides.length;
+  let current = 0;
+
+  const progressFill = document.getElementById('progressFill');
+  const hint = document.getElementById('hint');
+
+  function render(){
+    slides.forEach((s, i) => s.classList.toggle('active', i === current));
+    progressFill.style.width = (((current + 1) / total) * 100) + '%';
+  }
+
+  function go(delta){
+    const next = current + delta;
+    if (next < 0 || next >= total) return;
+    current = next;
+    render();
+    if (hint) { hint.classList.add('hidden'); }
+  }
+
+  window.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowRight' || e.key === 'PageDown' || e.key === ' '){
+      e.preventDefault();
+      go(1);
+    } else if (e.key === 'ArrowLeft' || e.key === 'PageUp'){
+      e.preventDefault();
+      go(-1);
+    }
+  });
+
+  render();
+
+  (function(){
+    const items = Array.from(document.querySelectorAll('.shot-frame-wrap')).map((wrap) => {
+      const frame = wrap.querySelector('.shot-frame');
+      if (!frame) return null;
+      const indicator = document.createElement('div');
+      indicator.className = 'scroll-indicator';
+      wrap.appendChild(indicator);
+      return { frame, indicator, hideTimer: null };
+    }).filter(Boolean);
+
+    function update(item){
+      const { frame, indicator } = item;
+      const ratio = frame.scrollHeight ? frame.clientHeight / frame.scrollHeight : 1;
+      if (ratio >= 0.999){
+        indicator.style.opacity = '0';
+        return;
+      }
+      indicator.style.opacity = '';
+      const thumbPct = ratio * 100;
+      const maxScroll = frame.scrollHeight - frame.clientHeight;
+      const progress = maxScroll > 0 ? frame.scrollTop / maxScroll : 0;
+      indicator.style.height = thumbPct + '%';
+      indicator.style.top = (progress * (100 - thumbPct)) + '%';
+    }
+
+    items.forEach((item) => {
+      update(item);
+      const img = item.frame.querySelector('img');
+      if (img){
+        if (img.complete) update(item);
+        else img.addEventListener('load', () => update(item));
+      }
+      item.frame.addEventListener('scroll', () => {
+        update(item);
+        item.indicator.classList.add('is-scrolling');
+        clearTimeout(item.hideTimer);
+        item.hideTimer = setTimeout(() => item.indicator.classList.remove('is-scrolling'), 600);
+      });
+    });
+
+    window.addEventListener('resize', () => items.forEach(update));
+  })();
+</script>
+
+</body>
+</html>

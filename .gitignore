@@ -1,0 +1,6 @@
+.DS_Store
+**/.DS_Store
+
+# Raw/unused footage -- only the -v2.mp4 is referenced by index.html
+assets/05-goal-based-savings/prototype-video/*.mov
+assets/05-goal-based-savings/prototype-video/goal-based-savings-prototype.mp4

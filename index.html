@@ -742,6 +742,11 @@
     margin-right: calc(-1 * var(--slide-pad-x));
     -webkit-mask-image: linear-gradient(to right, transparent, black clamp(1.5rem, 4cqw, 4rem), black calc(100% - clamp(1.5rem, 4cqw, 4rem)), transparent);
     mask-image: linear-gradient(to right, transparent, black clamp(1.5rem, 4cqw, 4rem), black calc(100% - clamp(1.5rem, 4cqw, 4rem)), transparent);
+    touch-action: none;
+    cursor: grab;
+  }
+  .ticker-row.is-dragging{
+    cursor: grabbing;
   }
   .ticker-track{
     display: flex;
@@ -750,7 +755,14 @@
     width: max-content;
     gap: clamp(1.25rem, 2.2cqw, 2rem);
     padding: 0 var(--slide-pad-x);
-    animation: ticker-scroll 34s linear infinite;
+    animation: ticker-scroll 55s linear infinite;
+  }
+  .dashboard-ticker .ticker-track{
+    animation-duration: 80s;
+  }
+  .ticker-track img, .ticker-track .shot-frame-wrap{
+    -webkit-user-drag: none;
+    user-select: none;
   }
   @keyframes ticker-scroll{
     from{ transform: translateX(0); }
@@ -1243,6 +1255,55 @@
     document.addEventListener('touchend', release, { passive: true });
     document.addEventListener('touchcancel', release, { passive: true });
   })();
+
+  // Press-and-hold pauses a ticker; holding and dragging scrubs it.
+  // Releasing resumes the auto-scroll from wherever it was left.
+  Array.from(document.querySelectorAll('.ticker-row')).forEach((row) => {
+    const track = row.querySelector('.ticker-track');
+    const duration = parseFloat(getComputedStyle(track).animationDuration) || 55;
+    let dragging = false;
+    let baseX = 0;
+    let startX = 0;
+    let currentX = 0;
+
+    function getTranslateX(){
+      const t = getComputedStyle(track).transform;
+      if (t === 'none') return 0;
+      const m = new DOMMatrixReadOnly(t);
+      return m.m41;
+    }
+
+    row.addEventListener('pointerdown', (e) => {
+      dragging = true;
+      row.classList.add('is-dragging');
+      baseX = currentX = getTranslateX();
+      startX = e.clientX;
+      track.style.animation = 'none';
+      track.style.transform = 'translateX(' + baseX + 'px)';
+      row.setPointerCapture(e.pointerId);
+    });
+
+    row.addEventListener('pointermove', (e) => {
+      if (!dragging) return;
+      currentX = baseX + (e.clientX - startX);
+      track.style.transform = 'translateX(' + currentX + 'px)';
+    });
+
+    function release(){
+      if (!dragging) return;
+      dragging = false;
+      row.classList.remove('is-dragging');
+      const half = track.scrollWidth / 2;
+      let norm = currentX % half;
+      if (norm > 0) norm -= half;
+      const progress = norm / -half;
+      track.style.transform = '';
+      track.style.animation = 'ticker-scroll ' + duration + 's linear infinite';
+      track.style.animationDelay = (-progress * duration) + 's';
+    }
+    row.addEventListener('pointerup', release);
+    row.addEventListener('pointercancel', release);
+  });
 
   render();
 

@@ -547,7 +547,7 @@
     -ms-overflow-style: none;
   }
   @media (orientation: portrait){
-    .shot-frame, .dashboard-carousel{
+    .shot-frame{
       touch-action: none;
     }
   }
@@ -695,26 +695,11 @@
   }
   .single-zone .ph{ width: 100%; height: 100%; }
 
-  /* ================= SLIDE 9 — DASHBOARD CAROUSEL ================= */
-  .dashboard-carousel{
-    flex: 1;
-    display: flex;
-    align-items: center;
+  /* ================= SLIDE 9 — DASHBOARD TICKER ================= */
+  .dashboard-ticker .ticker-track{
     gap: clamp(1rem, 2cqw, 1.5rem);
-    overflow-x: auto;
-    overflow-y: hidden;
-    min-height: 0;
-    scrollbar-width: none;
-    -ms-overflow-style: none;
-    width: calc(100% + 2 * var(--slide-pad-x));
-    margin-left: calc(-1 * var(--slide-pad-x));
-    margin-right: calc(-1 * var(--slide-pad-x));
-    padding-left: var(--slide-pad-x);
-    padding-right: var(--slide-pad-x);
-    box-sizing: border-box;
   }
-  .dashboard-carousel::-webkit-scrollbar{ display: none; width: 0; height: 0; }
-  .dashboard-carousel img{
+  .dashboard-ticker .ticker-track img{
     flex: none;
     height: 100%;
     width: auto;
@@ -766,9 +751,6 @@
     gap: clamp(1.25rem, 2.2cqw, 2rem);
     padding: 0 var(--slide-pad-x);
     animation: ticker-scroll 34s linear infinite;
-  }
-  .ticker-row:hover .ticker-track{
-    animation-play-state: paused;
   }
   @keyframes ticker-scroll{
     from{ transform: translateX(0); }
@@ -1111,13 +1093,21 @@
     <section class="slide slide-single" data-slide="10">
       <div class="eyebrow">Gold Leasing Dashboard (B2B)</div>
       <p class="oneliner">Designed a B2B dashboard for Gullak's jeweller partners to track gold leasing, including disbursement, interest payouts, and lease applications. This helped onboard 3 more jeweller partners.</p>
-      <div class="dashboard-carousel">
-        <img src="assets/07-gold-leasing-dashboard/Gullak%20Case%20Study/Lease%20Config-4.png" alt="" />
-        <img src="assets/07-gold-leasing-dashboard/Gullak%20Case%20Study/Adding%20Buffer%2029.png" alt="" />
-        <img src="assets/07-gold-leasing-dashboard/Gullak%20Case%20Study/dashboard-overview.png" alt="" />
-        <img src="assets/07-gold-leasing-dashboard/Gullak%20Case%20Study/disbursement-tracking.png" alt="" />
-        <img src="assets/07-gold-leasing-dashboard/Gullak%20Case%20Study/Repayment%20Page.png" alt="" />
-        <img src="assets/07-gold-leasing-dashboard/Gullak%20Case%20Study/profile.png" alt="" />
+      <div class="ticker-row dashboard-ticker">
+        <div class="ticker-track">
+          <img src="assets/07-gold-leasing-dashboard/Gullak%20Case%20Study/Lease%20Config-4.png" alt="" />
+          <img src="assets/07-gold-leasing-dashboard/Gullak%20Case%20Study/Adding%20Buffer%2029.png" alt="" />
+          <img src="assets/07-gold-leasing-dashboard/Gullak%20Case%20Study/dashboard-overview.png" alt="" />
+          <img src="assets/07-gold-leasing-dashboard/Gullak%20Case%20Study/disbursement-tracking.png" alt="" />
+          <img src="assets/07-gold-leasing-dashboard/Gullak%20Case%20Study/Repayment%20Page.png" alt="" />
+          <img src="assets/07-gold-leasing-dashboard/Gullak%20Case%20Study/profile.png" alt="" />
+          <img src="assets/07-gold-leasing-dashboard/Gullak%20Case%20Study/Lease%20Config-4.png" alt="" aria-hidden="true" />
+          <img src="assets/07-gold-leasing-dashboard/Gullak%20Case%20Study/Adding%20Buffer%2029.png" alt="" aria-hidden="true" />
+          <img src="assets/07-gold-leasing-dashboard/Gullak%20Case%20Study/dashboard-overview.png" alt="" aria-hidden="true" />
+          <img src="assets/07-gold-leasing-dashboard/Gullak%20Case%20Study/disbursement-tracking.png" alt="" aria-hidden="true" />
+          <img src="assets/07-gold-leasing-dashboard/Gullak%20Case%20Study/Repayment%20Page.png" alt="" aria-hidden="true" />
+          <img src="assets/07-gold-leasing-dashboard/Gullak%20Case%20Study/profile.png" alt="" aria-hidden="true" />
+        </div>
       </div>
     </section>
 
@@ -1227,34 +1217,25 @@
 
   // In portrait mode the frame is visually rotated -90deg, so a native
   // vertical drag no longer lines up with a vertical-scrolling phone
-  // frame's own scroll axis (and likewise for the horizontal dashboard
-  // carousel) -- native touch-scroll can't handle that mismatch, so we
-  // drive scrollTop/scrollLeft manually from the raw touch delta here.
+  // frame's own scroll axis -- native touch-scroll can't handle that
+  // mismatch, so we drive scrollTop manually from the raw touch delta.
   (function(){
-    const SCROLL_SELECTOR = '.shot-frame, .dashboard-carousel';
-    let dragEl = null, lastX = 0, lastY = 0;
+    let dragEl = null, lastX = 0;
 
     document.addEventListener('touchstart', (e) => {
       if (!isPortrait() || e.touches.length !== 1) return;
-      const el = e.target.closest(SCROLL_SELECTOR);
+      const el = e.target.closest('.shot-frame');
       if (!el) return;
       dragEl = el;
       lastX = e.touches[0].clientX;
-      lastY = e.touches[0].clientY;
     }, { passive: true });
 
     document.addEventListener('touchmove', (e) => {
       if (!dragEl) return;
       const touch = e.touches[0];
       const dx = touch.clientX - lastX;
-      const dy = touch.clientY - lastY;
       lastX = touch.clientX;
-      lastY = touch.clientY;
-      if (dragEl.classList.contains('shot-frame')){
-        dragEl.scrollTop -= dx;
-      } else {
-        dragEl.scrollLeft += dy;
-      }
+      dragEl.scrollTop -= dx;
       e.preventDefault();
     }, { passive: false });
 

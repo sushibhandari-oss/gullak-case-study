@@ -228,8 +228,17 @@
     gap: clamp(0.9rem, 1.8vw, 1.3rem);
   }
   .stat-row{
+    display: flex;
+    align-items: baseline;
+    gap: clamp(0.75rem, 1.5vw, 1.1rem);
     font-size: clamp(0.95rem, 1.25vw, 1.1rem);
     line-height: 1.4;
+  }
+  .stat-num{
+    font-family: var(--font-mono);
+    font-size: clamp(0.75rem, 1vw, 0.9rem);
+    color: var(--gold-dim);
+    flex: none;
   }
   .stat-strong{ color: var(--ink); font-weight: 600; }
   .stat-dim{ color: var(--ink-faint); }
@@ -823,10 +832,10 @@
           <h1 class="about-title">About Gullak</h1>
           <p class="about-body">Gullak is a gold investment app that enables Indians to invest, lease and purchase Digital Gold &amp; Physical Gold.</p>
           <div class="about-stats">
-            <div class="stat-row"><span class="stat-strong">1.5M users</span></div>
-            <div class="stat-row"><span class="stat-strong">4.7 rating</span> <span class="stat-dim">on app store</span></div>
-            <div class="stat-row"><span class="stat-strong">1000kg Gold</span> <span class="stat-dim">sold so far</span></div>
-            <div class="stat-row"><span class="stat-dim">Backed by</span> <span class="stat-strong">YCombinator &amp; Chiratae Ventures</span></div>
+            <div class="stat-row"><span class="stat-num">01</span><span class="stat-strong">1.5M users</span></div>
+            <div class="stat-row"><span class="stat-num">02</span><span class="stat-strong">4.7 rating</span> <span class="stat-dim">on app store</span></div>
+            <div class="stat-row"><span class="stat-num">03</span><span class="stat-strong">1000kg Gold</span> <span class="stat-dim">sold so far</span></div>
+            <div class="stat-row"><span class="stat-num">04</span><span class="stat-dim">Backed by</span> <span class="stat-strong">YCombinator &amp; Chiratae Ventures</span></div>
           </div>
         </div>
         <div class="about-right">

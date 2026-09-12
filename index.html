@@ -45,9 +45,26 @@
 
   ::selection{ background: var(--gold-dim); color: var(--ink); }
 
-  .stage{
+  .viewport-rotator{
     position: fixed;
-    inset: 0;
+    top: 50%;
+    left: 50%;
+    width: 100vw;
+    height: 100vh;
+    transform: translate(-50%, -50%);
+    overflow: hidden;
+  }
+  @media (orientation: portrait){
+    .viewport-rotator{
+      width: 100vh;
+      height: 100vw;
+      transform: translate(-50%, -50%) rotate(-90deg);
+    }
+  }
+
+  .stage{
+    width: 100%;
+    height: 100%;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -61,6 +78,12 @@
     height: min(100vh, 56.25vw);
     background: var(--bg);
     box-shadow: 0 0 0 1px var(--line);
+  }
+  @media (orientation: portrait){
+    .frame{
+      width: min(100vh, 177.78vw);
+      height: min(100vw, 56.25vh);
+    }
   }
 
   .slide{
@@ -775,46 +798,34 @@
     transition: width 0.4s ease;
   }
 
-  .desktop-only-notice{
+  .swipe-hint{
+    position: absolute;
+    bottom: clamp(1rem, 3vw, 1.75rem);
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: var(--font-mono);
+    font-size: clamp(0.62rem, 1.6vw, 0.75rem);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    background: var(--bg-raised);
+    padding: 0.5em 1.1em;
+    border-radius: 999px;
     display: none;
+    opacity: 1;
+    transition: opacity 0.6s ease;
+    z-index: 3;
+    pointer-events: none;
   }
-  @media (max-width: 1199px){
-    .stage{ display: none; }
-    .desktop-only-notice{
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 1rem;
-      min-height: 100vh;
-      padding: 2rem;
-      text-align: center;
-      background: var(--bg);
-      color: var(--ink);
-      font-family: var(--font-display);
-    }
-    .desktop-only-notice h1{
-      font-family: var(--font-cover-title);
-      font-size: clamp(1.6rem, 6vw, 2.4rem);
-      font-weight: 400;
-      color: var(--cover-ink);
-    }
-    .desktop-only-notice p{
-      font-size: clamp(0.85rem, 3vw, 1rem);
-      color: var(--ink-dim);
-      max-width: 32ch;
-      line-height: 1.5;
-    }
+  .swipe-hint.hidden{ opacity: 0; }
+  @media (hover: none) and (pointer: coarse){
+    .swipe-hint{ display: block; }
   }
 </style>
 </head>
 <body>
 
-<div class="desktop-only-notice">
-  <h1>Open on Desktop</h1>
-  <p>This case study isn't optimized for smaller screens yet. Please view it on a larger window (1200px or wider) for the full experience.</p>
-</div>
-
+<div class="viewport-rotator">
 <div class="stage">
   <div class="frame" id="frame">
 
@@ -1117,7 +1128,10 @@
       <div class="progress-fill" id="progressFill"></div>
     </div>
 
+    <div class="swipe-hint" id="swipeHint">Swipe to navigate</div>
+
   </div>
+</div>
 </div>
 
 <script>
@@ -1127,6 +1141,7 @@
 
   const progressFill = document.getElementById('progressFill');
   const hint = document.getElementById('hint');
+  const swipeHint = document.getElementById('swipeHint');
 
   function render(){
     slides.forEach((s, i) => s.classList.toggle('active', i === current));
@@ -1139,6 +1154,7 @@
     current = next;
     render();
     if (hint) { hint.classList.add('hidden'); }
+    if (swipeHint) { swipeHint.classList.add('hidden'); }
   }
 
   window.addEventListener('keydown', (e) => {
@@ -1150,6 +1166,28 @@
       go(-1);
     }
   });
+
+  (function(){
+    let startX = 0, startY = 0, startTarget = null;
+    document.addEventListener('touchstart', (e) => {
+      if (e.touches.length !== 1) return;
+      startX = e.touches[0].clientX;
+      startY = e.touches[0].clientY;
+      startTarget = e.target;
+    }, { passive: true });
+    document.addEventListener('touchend', (e) => {
+      if (!startTarget) return;
+      const touch = e.changedTouches[0];
+      const dx = touch.clientX - startX;
+      const dy = touch.clientY - startY;
+      const insideScrollableCarousel = startTarget.closest && startTarget.closest('.dashboard-carousel');
+      startTarget = null;
+      if (insideScrollableCarousel) return;
+      if (Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(dy) * 1.5){
+        go(dx < 0 ? 1 : -1);
+      }
+    }, { passive: true });
+  })();
 
   render();
 

@@ -74,17 +74,13 @@
 
   .frame{
     position: relative;
-    width: min(100vw, 177.78vh);
-    height: min(100vh, 56.25vw);
+    width: 1512px;
+    height: 850.5px;
+    flex: none;
     background: var(--bg);
     box-shadow: 0 0 0 1px var(--line);
     container-type: inline-size;
-  }
-  @media (orientation: portrait){
-    .frame{
-      width: min(100vh, 177.78vw);
-      height: min(100vw, 56.25vh);
-    }
+    transform-origin: center center;
   }
 
   .slide{
@@ -1143,6 +1139,27 @@
   const progressFill = document.getElementById('progressFill');
   const hint = document.getElementById('hint');
   const tapHint = document.getElementById('tapHint');
+  const frameEl = document.getElementById('frame');
+
+  const FRAME_W = 1512;
+  const FRAME_H = 850.5;
+
+  function isPortrait(){
+    return window.matchMedia('(orientation: portrait)').matches;
+  }
+
+  function fitFrame(){
+    const availW = isPortrait() ? window.innerHeight : window.innerWidth;
+    const availH = isPortrait() ? window.innerWidth : window.innerHeight;
+    const scale = Math.min(availW / FRAME_W, availH / FRAME_H);
+    frameEl.style.transform = 'scale(' + scale + ')';
+  }
+  fitFrame();
+  window.addEventListener('resize', fitFrame);
+  window.addEventListener('orientationchange', fitFrame);
+  if (window.visualViewport){
+    window.visualViewport.addEventListener('resize', fitFrame);
+  }
 
   function render(){
     slides.forEach((s, i) => s.classList.toggle('active', i === current));
@@ -1169,7 +1186,6 @@
   });
 
   (function(){
-    const frameEl = document.getElementById('frame');
     let startX = 0, startY = 0, startTime = 0, startTarget = null;
     document.addEventListener('touchstart', (e) => {
       if (e.touches.length !== 1) return;
@@ -1191,8 +1207,15 @@
       // with scrolling inside phone frames or the dashboard carousel.
       if (Math.abs(dx) < 12 && Math.abs(dy) < 12 && dt < 500){
         const rect = frameEl.getBoundingClientRect();
-        const midX = rect.left + rect.width / 2;
-        go(touch.clientX < midX ? -1 : 1);
+        if (isPortrait()){
+          // Frame is visually rotated into landscape, so split by the
+          // real screen's top/bottom half rather than left/right.
+          const midY = rect.top + rect.height / 2;
+          go(touch.clientY < midY ? 1 : -1);
+        } else {
+          const midX = rect.left + rect.width / 2;
+          go(touch.clientX < midX ? -1 : 1);
+        }
       }
     }, { passive: true });
   })();

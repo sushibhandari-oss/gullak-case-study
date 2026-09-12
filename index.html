@@ -798,7 +798,7 @@
     transition: width 0.4s ease;
   }
 
-  .swipe-hint{
+  .tap-hint{
     position: absolute;
     bottom: clamp(1rem, 3vw, 1.75rem);
     left: 50%;
@@ -817,9 +817,9 @@
     z-index: 3;
     pointer-events: none;
   }
-  .swipe-hint.hidden{ opacity: 0; }
+  .tap-hint.hidden{ opacity: 0; }
   @media (hover: none) and (pointer: coarse){
-    .swipe-hint{ display: block; }
+    .tap-hint{ display: block; }
   }
 </style>
 </head>
@@ -1128,7 +1128,7 @@
       <div class="progress-fill" id="progressFill"></div>
     </div>
 
-    <div class="swipe-hint" id="swipeHint">Swipe to navigate</div>
+    <div class="tap-hint" id="tapHint">Tap left / right to navigate</div>
 
   </div>
 </div>
@@ -1141,7 +1141,7 @@
 
   const progressFill = document.getElementById('progressFill');
   const hint = document.getElementById('hint');
-  const swipeHint = document.getElementById('swipeHint');
+  const tapHint = document.getElementById('tapHint');
 
   function render(){
     slides.forEach((s, i) => s.classList.toggle('active', i === current));
@@ -1154,7 +1154,7 @@
     current = next;
     render();
     if (hint) { hint.classList.add('hidden'); }
-    if (swipeHint) { swipeHint.classList.add('hidden'); }
+    if (tapHint) { tapHint.classList.add('hidden'); }
   }
 
   window.addEventListener('keydown', (e) => {
@@ -1168,11 +1168,13 @@
   });
 
   (function(){
-    let startX = 0, startY = 0, startTarget = null;
+    const frameEl = document.getElementById('frame');
+    let startX = 0, startY = 0, startTime = 0, startTarget = null;
     document.addEventListener('touchstart', (e) => {
       if (e.touches.length !== 1) return;
       startX = e.touches[0].clientX;
       startY = e.touches[0].clientY;
+      startTime = Date.now();
       startTarget = e.target;
     }, { passive: true });
     document.addEventListener('touchend', (e) => {
@@ -1180,11 +1182,16 @@
       const touch = e.changedTouches[0];
       const dx = touch.clientX - startX;
       const dy = touch.clientY - startY;
-      const insideScrollableCarousel = startTarget.closest && startTarget.closest('.dashboard-carousel');
+      const dt = Date.now() - startTime;
+      const isInteractive = startTarget.closest && startTarget.closest('a, button, video, .cta-link');
       startTarget = null;
-      if (insideScrollableCarousel) return;
-      if (Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(dy) * 1.5){
-        go(dx < 0 ? 1 : -1);
+      if (isInteractive) return;
+      // Only treat this as a tap (not a drag/scroll) so it doesn't fight
+      // with scrolling inside phone frames or the dashboard carousel.
+      if (Math.abs(dx) < 12 && Math.abs(dy) < 12 && dt < 500){
+        const rect = frameEl.getBoundingClientRect();
+        const midX = rect.left + rect.width / 2;
+        go(touch.clientX < midX ? -1 : 1);
       }
     }, { passive: true });
   })();

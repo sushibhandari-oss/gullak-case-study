@@ -162,7 +162,7 @@
     font-weight: 400;
     color: var(--cover-sub);
   }
-  /* ================= SLIDE 10 — THANK YOU (OUTRO) ================= */
+  /* ================= SLIDE 11 — THANK YOU (OUTRO) ================= */
   .slide-outro{
     background: var(--cover-bg);
     align-items: center;
@@ -192,7 +192,65 @@
   }
   .hint.hidden{ opacity: 0; }
 
-  /* ================= SLIDE 2 — INDEX ================= */
+  /* ================= SLIDE 2 — ABOUT GULLAK ================= */
+  .slide-about{
+    justify-content: center;
+  }
+  .about-grid{
+    flex: 1;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    column-gap: clamp(2.5rem, 5vw, 4rem);
+    min-height: 0;
+  }
+  .about-left{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: clamp(1.5rem, 3vw, 2.25rem);
+    max-width: 46ch;
+  }
+  .about-title{
+    font-family: var(--font-cover-title);
+    font-size: clamp(1.9rem, 3.4vw, 2.7rem);
+    font-weight: 400;
+    color: var(--cover-ink);
+    line-height: 1.15;
+  }
+  .about-body{
+    font-size: clamp(1rem, 1.4vw, 1.2rem);
+    color: var(--ink-dim);
+    line-height: 1.55;
+  }
+  .about-stats{
+    display: flex;
+    flex-direction: column;
+    gap: clamp(0.9rem, 1.8vw, 1.3rem);
+  }
+  .stat-row{
+    font-size: clamp(0.95rem, 1.25vw, 1.1rem);
+    line-height: 1.4;
+  }
+  .stat-strong{ color: var(--ink); font-weight: 600; }
+  .stat-dim{ color: var(--ink-faint); }
+  .about-right{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 0;
+  }
+  .about-image{
+    height: 100%;
+    width: auto;
+    max-width: 100%;
+    aspect-ratio: 1019 / 1124;
+    object-fit: cover;
+    border-radius: 20px;
+    border: 1px solid var(--line);
+    box-shadow: var(--shadow-soft);
+  }
+
+  /* ================= SLIDE 3 — INDEX ================= */
   .slide-index{
     justify-content: center;
   }
@@ -343,7 +401,7 @@
     box-shadow: var(--shadow-soft);
   }
 
-  /* ================= SLIDE 4 — LOGO EXPLORATIONS: FULL SET ================= */
+  /* ================= SLIDE 5 — LOGO EXPLORATIONS: FULL SET ================= */
   .slide-explore-full{
     gap: clamp(0.9rem, 1.8vw, 1.4rem);
   }
@@ -382,7 +440,7 @@
     aspect-ratio: 375 / 640;
   }
 
-  /* ================= SLIDE 5 — APP ICONS ================= */
+  /* ================= SLIDE 6 — APP ICONS ================= */
   .slide-icons{
     justify-content: center;
     gap: clamp(1.5rem, 3vw, 2.5rem);
@@ -419,7 +477,7 @@
     color: var(--ink-faint);
   }
 
-  /* ================= SLIDE 3 — FESTIVE FINAL ================= */
+  /* ================= SLIDE 4 — FESTIVE FINAL ================= */
   .slide-final{
     justify-content: center;
     gap: clamp(1.25rem, 2.5vw, 2rem);
@@ -494,7 +552,7 @@
     color: var(--ink-faint);
   }
 
-  /* ================= SLIDE 6 — GOAL-BASED SAVINGS ================= */
+  /* ================= SLIDE 7 — GOAL-BASED SAVINGS ================= */
   .goals-body{
     flex: 1;
     display: grid;
@@ -603,7 +661,7 @@
   }
   .single-zone .ph{ width: 100%; height: 100%; }
 
-  /* ================= SLIDE 8 — DASHBOARD CAROUSEL ================= */
+  /* ================= SLIDE 9 — DASHBOARD CAROUSEL ================= */
   .dashboard-carousel{
     flex: 1;
     display: flex;
@@ -634,7 +692,7 @@
     object-fit: cover;
   }
 
-  /* ================= SLIDE 7 — JEWELLERY AGGREGATOR: SCREEN ROW ================= */
+  /* ================= SLIDE 8 — JEWELLERY AGGREGATOR: SCREEN ROW ================= */
   .screen-row{
     flex: 1;
     display: flex;
@@ -650,7 +708,7 @@
     max-height: 100%;
   }
 
-  /* ================= SLIDE 9 — JEWELLERY SCHEMES: TICKER ================= */
+  /* ================= SLIDE 10 — JEWELLERY SCHEMES: TICKER ================= */
   .screen-row-cover .shot-frame img{
     height: 100%;
     object-fit: cover;
@@ -758,8 +816,27 @@
       <p class="hint" id="hint">Use ← → to navigate</p>
     </section>
 
-    <!-- SLIDE 2 — INTRO / INDEX -->
-    <section class="slide slide-index" data-slide="2">
+    <!-- SLIDE 2 — ABOUT GULLAK -->
+    <section class="slide slide-about" data-slide="2">
+      <div class="about-grid">
+        <div class="about-left">
+          <h1 class="about-title">About Gullak</h1>
+          <p class="about-body">Gullak is a gold investment app that enables Indians to invest, lease and purchase Digital Gold &amp; Physical Gold.</p>
+          <div class="about-stats">
+            <div class="stat-row"><span class="stat-strong">1.5M users</span></div>
+            <div class="stat-row"><span class="stat-strong">4.7 rating</span> <span class="stat-dim">on app store</span></div>
+            <div class="stat-row"><span class="stat-strong">1000kg Gold</span> <span class="stat-dim">sold so far</span></div>
+            <div class="stat-row"><span class="stat-dim">Backed by</span> <span class="stat-strong">YCombinator &amp; Chiratae Ventures</span></div>
+          </div>
+        </div>
+        <div class="about-right">
+          <img class="about-image" src="assets/01-about-gullak/about-gullak-hero.png" alt="" />
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 3 — INTRO / INDEX -->
+    <section class="slide slide-index" data-slide="3">
       <div class="index-grid">
         <div class="index-body">
           <p class="oneliner">At Gullak, I owned features end to end — from strategy through execution, including visual and motion design, not just product design. Across a two-person team, I worked on 10+ features spanning the consumer-facing app, B2B internal tools, and marketing and collaboration material.</p>
@@ -788,8 +865,8 @@
       </div>
     </section>
 
-    <!-- SLIDE 3 — FESTIVE CAMPAIGNS: FINAL -->
-    <section class="slide slide-final" data-slide="3">
+    <!-- SLIDE 4 — FESTIVE CAMPAIGNS: FINAL -->
+    <section class="slide slide-final" data-slide="4">
       <div class="eyebrow">Festive Campaigns</div>
       <p class="oneliner">Drove ~3x GTV uplift on Gullak during Akshaya Tritiya and Diwali through conversion-focused festive journeys and seasonal offer discovery.</p>
       <div class="final-row">
@@ -828,8 +905,8 @@
       </div>
     </section>
 
-    <!-- SLIDE 4 — LOGO EXPLORATIONS: FULL SET -->
-    <section class="slide slide-explore-full" data-slide="4">
+    <!-- SLIDE 5 — LOGO EXPLORATIONS: FULL SET -->
+    <section class="slide slide-explore-full" data-slide="5">
       <div class="eyebrow">Logo Explorations</div>
       <div class="explore-full">
         <div class="explore-row-block">
@@ -855,8 +932,8 @@
       </div>
     </section>
 
-    <!-- SLIDE 5 — APP ICONS -->
-    <section class="slide slide-icons" data-slide="5">
+    <!-- SLIDE 6 — APP ICONS -->
+    <section class="slide slide-icons" data-slide="6">
       <div class="eyebrow">App Icons Across Festivals</div>
       <div class="icon-row">
         <div class="icon-cell">
@@ -878,8 +955,8 @@
       </div>
     </section>
 
-    <!-- SLIDE 6 — GOAL-BASED SAVINGS -->
-    <section class="slide slide-goals" data-slide="6">
+    <!-- SLIDE 7 — GOAL-BASED SAVINGS -->
+    <section class="slide slide-goals" data-slide="7">
       <div class="goals-body">
         <div class="goals-left">
           <div class="eyebrow">Goal-Based Savings</div>
@@ -904,8 +981,8 @@
       </div>
     </section>
 
-    <!-- SLIDE 7 — JEWELLERY SCHEMES -->
-    <section class="slide slide-single" data-slide="7">
+    <!-- SLIDE 8 — JEWELLERY SCHEMES -->
+    <section class="slide slide-single" data-slide="8">
       <div class="eyebrow">Jewellery Schemes</div>
       <p class="oneliner">The failure of goal-based savings led to jewellery schemes on Gullak. I owned design of the pioneer scheme with CaratLane as proof of concept, which helped scale to 10+ schemes.</p>
       <a class="cta-link" href="https://www.figma.com/proto/3kz64Pb7xG3gCdy4em0ZJb/Case-Studies?page-id=274%3A13916&node-id=732-18750&viewport=718%2C406%2C0.02&t=5lg9QsYfQ6wH7nF5-1&scaling=scale-down&content-scaling=fixed&hide-ui=1" target="_blank" rel="noopener">View Detailed Case Study →</a>
@@ -975,8 +1052,8 @@
       </div>
     </section>
 
-    <!-- SLIDE 8 — JEWELLERY AGGREGATOR -->
-    <section class="slide slide-single" data-slide="8">
+    <!-- SLIDE 9 — JEWELLERY AGGREGATOR -->
+    <section class="slide slide-single" data-slide="9">
       <div class="eyebrow">Jewellery Aggregator</div>
       <p class="oneliner">Designed a comparison tool letting users evaluate jewellery across multiple renowned jewellers in one place — addressing a market where comparing pieces meant visiting each jeweller's site individually.</p>
       <div class="screen-row">
@@ -1008,8 +1085,8 @@
       </div>
     </section>
 
-    <!-- SLIDE 9 — GOLD LEASING DASHBOARD -->
-    <section class="slide slide-single" data-slide="9">
+    <!-- SLIDE 10 — GOLD LEASING DASHBOARD -->
+    <section class="slide slide-single" data-slide="10">
       <div class="eyebrow">Gold Leasing Dashboard (B2B)</div>
       <p class="oneliner">Designed a B2B dashboard for Gullak's jeweller partners to track gold leasing, including disbursement, interest payouts, and lease applications. This helped onboard 3 more jeweller partners.</p>
       <div class="dashboard-carousel">
@@ -1022,8 +1099,8 @@
       </div>
     </section>
 
-    <!-- SLIDE 10 — THANK YOU -->
-    <section class="slide slide-outro" data-slide="10">
+    <!-- SLIDE 11 — THANK YOU -->
+    <section class="slide slide-outro" data-slide="11">
       <h1 class="cover-title">Thank You :)</h1>
     </section>
 

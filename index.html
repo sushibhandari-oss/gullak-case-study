@@ -546,6 +546,11 @@
     scrollbar-width: none;
     -ms-overflow-style: none;
   }
+  @media (orientation: portrait){
+    .shot-frame, .dashboard-carousel{
+      touch-action: none;
+    }
+  }
   .shot-frame img{
     display: block;
     width: 100%;
@@ -1218,6 +1223,44 @@
         }
       }
     }, { passive: true });
+  })();
+
+  // In portrait mode the frame is visually rotated -90deg, so a native
+  // vertical drag no longer lines up with a vertical-scrolling phone
+  // frame's own scroll axis (and likewise for the horizontal dashboard
+  // carousel) -- native touch-scroll can't handle that mismatch, so we
+  // drive scrollTop/scrollLeft manually from the raw touch delta here.
+  (function(){
+    const SCROLL_SELECTOR = '.shot-frame, .dashboard-carousel';
+    let dragEl = null, lastX = 0, lastY = 0;
+
+    document.addEventListener('touchstart', (e) => {
+      if (!isPortrait() || e.touches.length !== 1) return;
+      const el = e.target.closest(SCROLL_SELECTOR);
+      if (!el) return;
+      dragEl = el;
+      lastX = e.touches[0].clientX;
+      lastY = e.touches[0].clientY;
+    }, { passive: true });
+
+    document.addEventListener('touchmove', (e) => {
+      if (!dragEl) return;
+      const touch = e.touches[0];
+      const dx = touch.clientX - lastX;
+      const dy = touch.clientY - lastY;
+      lastX = touch.clientX;
+      lastY = touch.clientY;
+      if (dragEl.classList.contains('shot-frame')){
+        dragEl.scrollTop -= dx;
+      } else {
+        dragEl.scrollLeft += dy;
+      }
+      e.preventDefault();
+    }, { passive: false });
+
+    function release(){ dragEl = null; }
+    document.addEventListener('touchend', release, { passive: true });
+    document.addEventListener('touchcancel', release, { passive: true });
   })();
 
   render();
